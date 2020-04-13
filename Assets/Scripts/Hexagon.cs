@@ -54,8 +54,13 @@ public class Hexagon : MonoBehaviour
     {
         MakeInvisible();
         UserInterfaceManager.Instance.SpawnFloatingText(transform.position);
-        if(gameObject.GetComponent<Bomb>())
+        if (gameObject.GetComponent<Bomb>())
+        {
+            
+            Destroy(gameObject.GetComponent<Bomb>().LifeText.gameObject);
             Destroy(gameObject.GetComponent<Bomb>());
+        }
+        
         yield return StartCoroutine(ExplosionAnimation());
     }
 

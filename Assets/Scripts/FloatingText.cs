@@ -10,7 +10,7 @@ public class FloatingText : MonoBehaviour
     {
         var cam = Camera.main;
         transform.GetComponent<TextMeshProUGUI>().text = GameConstants.ExplosionScore.ToString();
-        transform.position = cam.WorldToScreenPoint(position);;
+        transform.position = cam.WorldToScreenPoint(position);
         transform.SetParent(GameManager.Instance.Canvas.transform);
         transform.DOMove(cam.WorldToScreenPoint(position + new Vector3(0, Random.Range(0.75f,1.25f) * FloatingTextDistance, 0)), FloatingTextDuration).SetEase(Ease.InOutSine)
             .SetDelay(FloatingTextDelay)

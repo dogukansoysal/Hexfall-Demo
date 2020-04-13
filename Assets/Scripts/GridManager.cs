@@ -17,8 +17,7 @@ public class GridManager : MonoBehaviour
     public Sprite[] BombSprite;
 
     public Transform CornerPrefab;
-    
-    private Transform _bombPrefab;
+    public Transform BombTextPrefab;
 
     
     private float _hexWidth = 1.732f;

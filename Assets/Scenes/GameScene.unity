@@ -1982,6 +1982,8 @@ MonoBehaviour:
   - {fileID: 4487907027722954856, guid: 2d2273664137fd24688c5e3a35075fc0, type: 3}
   CornerPrefab: {fileID: 8225045992879341461, guid: 7b6b3ed58a6835f4ca2cb25dc6112239,
     type: 3}
+  BombTextPrefab: {fileID: 2840791206824009035, guid: fca335c921d0ad74182c2e7ec953afb6,
+    type: 3}
 --- !u!114 &1913087709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2014,7 +2016,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ScoreText: {fileID: 2142552136}
-  FloatingTextPrefab: {fileID: 5733632695864907354, guid: ea10a0d94da807142a3b8bfb8f877c24,
+  FloatingTextPrefab: {fileID: 5733632695864907354, guid: 87106c8e85ee8ea4d8bc43af703ae53b,
     type: 3}
   HighScoreText: {fileID: 0}
   LastScoreText: {fileID: 0}

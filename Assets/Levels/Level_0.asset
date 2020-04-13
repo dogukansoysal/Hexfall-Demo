@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c53a443257c41f4ab07d82a126bd241, type: 3}
   m_Name: Level_0
   m_EditorClassIdentifier: 
-  ColorCount: 4
-  GridWidth: 8
-  GridHeight: 9
+  ColorCount: 6
+  GridWidth: 11
+  GridHeight: 11
   Gap: 0
