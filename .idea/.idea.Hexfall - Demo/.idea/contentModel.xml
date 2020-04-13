@@ -40,6 +40,7 @@
           <e p="GridManager.cs" t="Include" />
           <e p="Hexagon.cs" t="Include" />
           <e p="LevelManager.cs" t="Include" />
+          <e p="MenuManager.cs" t="Include" />
           <e p="ScriptableObject" t="Include">
             <e p="Level.cs" t="Include" />
           </e>

@@ -6,6 +6,7 @@ using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
 using ScriptableObject;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static GameConstants;
 
 public class GameManager : MonoBehaviour
@@ -43,6 +44,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Time.timeScale = 1;
         GridManager.Instance.InitGrid(CurrentLevel);
         GameState = GameState.Playable;
     }
@@ -79,6 +81,54 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
+
+    #region Game Management
+    
+    public void FinishGame()
+    {
+        // TODO: Finish Animation etc.
+        GameState = GameState.NotPlayable;
+
+        if (Score > PlayerPrefs.GetInt("HighScore", 0))
+        {
+            UpdateHighScore();
+        }
+        UpdateLastScore();
+
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+    
+    public void OpenMenuScene()
+    {
+        FinishGame();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+    }
+    #endregion
+
+
+    
+    #region Progress Management
+
+    private void UpdateLastScore()
+    {
+        PlayerPrefs.SetInt("LastScore", Score);
+    }
+    
+    private void UpdateHighScore()
+    {
+        PlayerPrefs.SetInt("HighScore", Score);
+    }
+
+    #endregion
+    
+    
+    
+    
     private void CalculateCurrentTouchPosition(){
         _currentTouchPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
         _currentTouchPosition = Cam.ScreenToWorldPoint(_currentTouchPosition);
