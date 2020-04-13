@@ -48,23 +48,25 @@ public class Hexagon : MonoBehaviour
 
         NeighbourIndices = cornerNeighbourIndex;
     }
+    
 
     public IEnumerator ExplosionSequence()
     {
-        // TODO: Spawn particle
-        
         MakeInvisible();
+        UserInterfaceManager.Instance.SpawnFloatingText(transform.position);
+        yield return StartCoroutine(ExplosionAnimation());
+    }
 
-        yield return StartCoroutine(Explode());
-        
+    public IEnumerator SpawnNewHexagon()
+    {
+        GridIndex = CalculateNewGridIndex();
+
         var colorIndex = Random.Range(0, GameManager.Instance.CurrentLevel.ColorCount);
         ChangeHexagonColor(GridManager.Instance.HexagonSprite[colorIndex], colorIndex);
 
         MoveToTop();
         MakeVisible();
-        yield return StartCoroutine(DropHexagon());
-        
-
+        yield return StartCoroutine(DropHexagon(GridIndex, true));
         /*
          * + Make sprite invisible
          * + Make Explosion (Particle burst)
@@ -103,7 +105,7 @@ public class Hexagon : MonoBehaviour
 
     }
 
-    private IEnumerator Explode()
+    private IEnumerator ExplosionAnimation()
     {
         var ps = transform.GetComponent<ParticleSystem>();
         ps.textureSheetAnimation.SetSprite(0, transform.GetComponent<SpriteRenderer>().sprite);
@@ -113,20 +115,43 @@ public class Hexagon : MonoBehaviour
         
     }
     
-    private IEnumerator DropHexagon()
+    
+    public IEnumerator DropHexagon(Vector2Int newGridIndex, bool isNewSpawned)
     {
+        GridIndex = newGridIndex;
+
         var targetPosition = GridManager.Instance.CalculateWorldPosition(GridIndex);
-        
-        var dropDuration = Mathf.Clamp(transform.position.y - targetPosition.y,0.25f, GameConstants.MaxDropDuration) * GameConstants.DropDuration;
-        dropDuration *= Random.Range(0.8f, 1.2f);
-        
-        var tween = transform.DOMove(targetPosition, dropDuration).SetEase(Ease.OutBounce);
+
+        var dropDuration = GameConstants.FallDuration;
+        var tween = transform.DOMove(targetPosition, dropDuration);
+        if (isNewSpawned)
+        {
+            dropDuration = Mathf.Clamp(transform.position.y - targetPosition.y,0.25f, GameConstants.MaxDropDuration) * GameConstants.DropDuration * Random.Range(0.8f, 1.2f);
+            tween = transform.DOMove(targetPosition, dropDuration).SetEase(Ease.OutBounce);
+        }
         
         while (tween.IsActive())
         {
             yield return null;
         }
     }
-    
-    
+
+    private Vector2Int CalculateNewGridIndex()
+    {
+        var heightIndex = GameManager.Instance.CurrentLevel.GridHeight - 1;
+        while (!GridManager.Instance.HexArray[GridIndex.x, heightIndex - 1])
+        {
+            heightIndex--;
+
+            // If not reached to bottom, continue.
+            if (heightIndex > 0) continue;
+            Debug.Log("AAAAAAAAAAAA");
+            Debug.LogError("This column is not empty." + GridIndex.ToString());
+            heightIndex = GameManager.Instance.CurrentLevel.GridHeight - 1;
+            break;
+        }
+        
+        GridIndex = new Vector2Int(GridIndex.x, heightIndex);
+        return GridIndex;
+    }
 }

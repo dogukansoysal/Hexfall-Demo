@@ -12,12 +12,12 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance; // static singleton
     public static Camera Cam;
+    public Canvas Canvas;
     
     public Level CurrentLevel;
     public Transform HexGroupOutline;
-
+    
     public Vector2Int SelectedCornerIndex;
-
     public GameState GameState;
 
         
@@ -26,6 +26,10 @@ public class GameManager : MonoBehaviour
     private Vector2 _firstTouchPosition;
     private Vector2 _currentTouchPosition;
 
+    /* Score Management */
+    public int Score;
+    public int explodedHexagonCount;
+    
     private void Awake()
     {
         if (Instance != null) {
@@ -96,21 +100,35 @@ public class GameManager : MonoBehaviour
             {
                 ReleaseCorner();
                 i = 3;
-            }
-            
-            while (hexList.Count > 0)
-            {
-                Coroutine explosionSequence = null;
-                for (var j = 0; j < hexList.Count; j++)
+                
+                // Found at least one matched group
+                while (hexList.Count > 0)
                 {
-                    explosionSequence = StartCoroutine(hexList[j].ExplosionSequence());
+                
+                    foreach (var hex in hexList)
+                    {
+                        explodedHexagonCount++;
+                        StartCoroutine(hex.ExplosionSequence());
+                        // Clear hexagon from grid
+                        GridManager.Instance.ClearGridCell(hex.GridIndex);
+                    }
+                
+                    UserInterfaceManager.Instance.UpdateScoreText();
+                    yield return GridManager.Instance.CheckEveryHexagonIfUnderIsEmpty();
+                    
+                    Coroutine coroutine = null;
+                    foreach (var hex in hexList)
+                    {
+                        coroutine = StartCoroutine(hex.SpawnNewHexagon());
+                        GridManager.Instance.FillGridCell(hex.GridIndex, hex);
+                    }
+                    
+                    yield return coroutine;
+                    hexList = GridManager.Instance.CheckEveryCorner();
+                    yield return new WaitForSeconds(CornerCheckDuration);
                 }
-
-                yield return explosionSequence;
-                hexList = GridManager.Instance.CheckEveryCorner();
             }
         }
-        
         
         GameState = GameState.Playable;
     }
@@ -171,7 +189,7 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(RotationDuration/4);
     }
     
     private IEnumerator RotateHexGroupOutline(int direction)
@@ -243,4 +261,23 @@ public class GameManager : MonoBehaviour
     {
         HexGroupOutline.gameObject.SetActive(false);
     }
+
+    
+    /// <summary>
+    /// Functions related to score management.
+    /// </summary>
+    #region Score Management
+
+    public void CalculateScore()
+    {
+        Score = explodedHexagonCount * ExplosionScore;
+    }
+
+
+    #endregion
+    
+    
+    
+    
+    
 }

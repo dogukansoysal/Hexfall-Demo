@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using ScriptableObject;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -57,6 +58,8 @@ public class GridManager : MonoBehaviour
         CreateGrid(level.GridWidth, level.GridHeight, level.ColorCount);
         CreateCornerGrid(level.GridWidth, level.GridHeight);
         SpawnCheckForEveryCorner(level.ColorCount);
+
+        
     }
 
     public Vector3 CalculateWorldPosition(Vector2Int gridPosition)
@@ -101,7 +104,7 @@ public class GridManager : MonoBehaviour
         hex.GetComponent<Hexagon>().ChangeHexagonColor(HexagonSprite[colorIndex], colorIndex);
         hex.position = CalculateWorldPosition(new Vector2Int(gridPosition.x, gridPosition.y));
         hex.parent = _gridHolder;
-        hex.name = "Hexagon" + gridPosition.x + "|" + gridPosition.y;
+        //hex.name = "Hexagon" + gridPosition.x + "|" + gridPosition.y;
         
         if(_hexArray[gridPosition.x, gridPosition.y] != null)
             Destroy(_hexArray[gridPosition.x, gridPosition.y].gameObject);
@@ -253,8 +256,6 @@ public class GridManager : MonoBehaviour
             hexList = CheckEveryCorner();
         }
         
-        
-        
         for (var y = 0; y < _cornerArray.GetLength(1); y++)
         {
             for (var x = 0; x < _cornerArray.GetLength(0); x++)
@@ -276,12 +277,10 @@ public class GridManager : MonoBehaviour
             }
         }
     }
-
-    
     
     public List<Hexagon> CheckEveryCorner()
     {
-        List<Hexagon> hexList = new List<Hexagon>();
+        var hexList = new List<Hexagon>();
         
         for (var y = 0; y < _cornerArray.GetLength(1); y++)
         {
@@ -295,12 +294,50 @@ public class GridManager : MonoBehaviour
                 {
                     foreach (var hex in hexGroup)
                     {
-                        hexList.Add(hex);
+                        if(!hexList.Exists(match => match == hex))
+                            hexList.Add(hex);
                     }
                 }
             }
         }
         return hexList;
+    }
+
+    public IEnumerator CheckEveryHexagonIfUnderIsEmpty()
+    {
+        Coroutine coroutine = null;
+        for (var y = 1; y < _hexArray.GetLength(0); y++)
+        {
+            for (var x = 0; x < _hexArray.GetLength(1); x++)
+            {
+                // if current is empty
+                if(!_hexArray[x,y]) continue;
+
+                // if under hex is empty
+                if (!_hexArray[x, y - 1])
+                {
+                    coroutine = StartCoroutine(_hexArray[x, y].DropHexagon(new Vector2Int(x, y - 1), false));
+                    FillGridCell(new Vector2Int(x, y - 1), _hexArray[x, y]);
+                    ClearGridCell(new Vector2Int(x, y));
+                    x = 0;
+                    y = 1;
+                }
+            }
+        }
+        yield return coroutine;
+    }
+    
+
+
+
+    public void FillGridCell(Vector2Int gridIndex, Hexagon hexagon)
+    {
+        HexArray[gridIndex.x, gridIndex.y] = hexagon;
+    }
+    
+    public void ClearGridCell(Vector2Int gridIndex)
+    {
+        HexArray[gridIndex.x, gridIndex.y] = null;
     }
     
     
@@ -345,7 +382,6 @@ public class GridManager : MonoBehaviour
 
         return false;
     }
-    
     
     public bool CheckEveryNeighbourHex(Transform[] hexGroup, Transform centerHex, int colorIndex)
     {
@@ -406,6 +442,34 @@ public class GridManager : MonoBehaviour
         return hexGroupGridIndices;
     }
 
+
+
+
+    /// <summary>
+    /// A Test function for grid.
+    /// </summary>
+    public void PrintGrid()
+    {
+        for (var x = 0; x < _hexArray.GetLength(0); x++)
+        {
+            var tempString = "";
+            for (var y = 0; y < _hexArray.GetLength(1); y++)
+            {
+                if (_hexArray[x, y])
+                {
+                    tempString += " X ";
+                }
+                else
+                {
+                    tempString += " - ";
+                }
+            }
+            Debug.Log(tempString);
+        }
+    }
+    
+    
+    
     #region Helper Functions
 
     /// <summary>
