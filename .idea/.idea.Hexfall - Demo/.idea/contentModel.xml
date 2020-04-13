@@ -33,6 +33,7 @@
           </e>
         </e>
         <e p="Scripts" t="Include">
+          <e p="Bomb.cs" t="Include" />
           <e p="CameraAspectRatioFix.cs" t="Include" />
           <e p="FloatingText.cs" t="Include" />
           <e p="GameConstants.cs" t="Include" />

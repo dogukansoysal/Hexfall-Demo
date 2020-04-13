@@ -14,7 +14,8 @@ public class GridManager : MonoBehaviour
     public Transform HexPrefab;
 
     public Sprite[] HexagonSprite;
-    
+    public Sprite[] BombSprite;
+
     public Transform CornerPrefab;
     
     private Transform _bombPrefab;
@@ -51,8 +52,8 @@ public class GridManager : MonoBehaviour
         // Corner Holder is being used for organized display.
         _cornerHolder = transform.GetChild(1);
 
-        _hexArray = new Hexagon[level.GridWidth,level.GridHeight];
-        _cornerArray = new Transform[level.GridWidth,level.GridHeight * 2];
+        _hexArray = new Hexagon[level.GridWidth, level.GridHeight];
+        _cornerArray = new Transform[level.GridWidth, level.GridHeight * 2];
 
         AddGap(level.Gap);
         CreateGrid(level.GridWidth, level.GridHeight, level.ColorCount);
@@ -306,17 +307,18 @@ public class GridManager : MonoBehaviour
     public IEnumerator CheckEveryHexagonIfUnderIsEmpty()
     {
         Coroutine coroutine = null;
-        for (var y = 1; y < _hexArray.GetLength(0); y++)
+        for (var y = 1; y < _hexArray.GetLength(1); y++)
         {
-            for (var x = 0; x < _hexArray.GetLength(1); x++)
+            for (var x = 0; x < _hexArray.GetLength(0); x++)
             {
-                // if current is empty
-                if(!_hexArray[x,y]) continue;
-
+                // if current is empty continue..
+                if (!_hexArray[x, y]) continue;
+                
                 // if under hex is empty
                 if (!_hexArray[x, y - 1])
                 {
                     coroutine = StartCoroutine(_hexArray[x, y].DropHexagon(new Vector2Int(x, y - 1), false));
+
                     FillGridCell(new Vector2Int(x, y - 1), _hexArray[x, y]);
                     ClearGridCell(new Vector2Int(x, y));
                     x = 0;
@@ -324,11 +326,28 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
-        yield return coroutine;
+
+        if (coroutine != null)
+            yield return StartCoroutine(CheckEveryHexagonIfUnderIsEmpty());
     }
     
 
-
+    public void CheckEveryHexagonIfBomb()
+    {
+        for (var y = 1; y < _hexArray.GetLength(1); y++)
+        {
+            for (var x = 0; x < _hexArray.GetLength(0); x++)
+            {
+                // if current is empty continue..
+                if (!_hexArray[x, y]) continue;
+                
+                if (_hexArray[x,y].transform.GetComponent<Bomb>())
+                {
+                    _hexArray[x,y].transform.GetComponent<Bomb>().DecreaseRemainingMove();
+                }
+            }
+        }
+    }
 
     public void FillGridCell(Vector2Int gridIndex, Hexagon hexagon)
     {

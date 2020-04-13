@@ -54,16 +54,21 @@ public class Hexagon : MonoBehaviour
     {
         MakeInvisible();
         UserInterfaceManager.Instance.SpawnFloatingText(transform.position);
+        if(gameObject.GetComponent<Bomb>())
+            Destroy(gameObject.GetComponent<Bomb>());
         yield return StartCoroutine(ExplosionAnimation());
     }
 
-    public IEnumerator SpawnNewHexagon()
+    public IEnumerator SpawnNewHexagon(bool spawnAsBomb)
     {
         GridIndex = CalculateNewGridIndex();
 
         var colorIndex = Random.Range(0, GameManager.Instance.CurrentLevel.ColorCount);
         ChangeHexagonColor(GridManager.Instance.HexagonSprite[colorIndex], colorIndex);
-
+        
+        if(spawnAsBomb)
+            gameObject.AddComponent<Bomb>().Initialize(Random.Range(GameConstants.minBombLife, GameConstants.maxBombLife));
+        
         MoveToTop();
         MakeVisible();
         yield return StartCoroutine(DropHexagon(GridIndex, true));

@@ -8,6 +8,7 @@ using ScriptableObject;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static GameConstants;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
@@ -100,6 +101,7 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     {
+        FinishGame();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     
@@ -162,24 +164,33 @@ public class GameManager : MonoBehaviour
                         // Clear hexagon from grid
                         GridManager.Instance.ClearGridCell(hex.GridIndex);
                     }
-                
+
+                    var scoreBeforeUpdate = Score/1000;
+                    
                     UserInterfaceManager.Instance.UpdateScoreText();
                     yield return GridManager.Instance.CheckEveryHexagonIfUnderIsEmpty();
                     
+                    var bombSpawnCount = (Score/1000) - scoreBeforeUpdate;
                     Coroutine coroutine = null;
                     foreach (var hex in hexList)
                     {
-                        coroutine = StartCoroutine(hex.SpawnNewHexagon());
+                        var spawnAsBomb = false;
+                        if (bombSpawnCount > 0)
+                        {
+                            spawnAsBomb = true;
+                            bombSpawnCount--;
+                        }
+                        coroutine = StartCoroutine(hex.SpawnNewHexagon(spawnAsBomb));
                         GridManager.Instance.FillGridCell(hex.GridIndex, hex);
                     }
-                    
+
                     yield return coroutine;
                     hexList = GridManager.Instance.CheckEveryCorner();
                     yield return new WaitForSeconds(CornerCheckDuration);
                 }
+                GridManager.Instance.CheckEveryHexagonIfBomb();
             }
         }
-        
         GameState = GameState.Playable;
     }
 
