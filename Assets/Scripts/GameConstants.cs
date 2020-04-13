@@ -14,15 +14,17 @@ public static class GameConstants
 
     public const float RotationDuration = 0.25f;
 
-    public const int ExplosionScore = 200;
+    public const int ExplosionScore = 40;
 
     public const float CornerCheckDuration = 0.1f;
 
     
-    public const int minBombLife = 5;
-    public const int maxBombLife = 10;
+    public const int minBombLife = 7;
+    public const int maxBombLife = 13;
 
 
+    /* Grid Fitting */
+    public const float ScaleRatio = 11;
 
     /* UI Constants */
     public const float FloatingTextDistance = 3f;

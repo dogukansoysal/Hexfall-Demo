@@ -30,7 +30,8 @@ public class Bomb : MonoBehaviour
 
     public void DecreaseRemainingMove()
     {
-        if (Life-- <= 0)
+        Life--;
+        if (Life <= 0)
         {
             GameManager.Instance.FinishGame();
             GameManager.Instance.OpenMenuScene();

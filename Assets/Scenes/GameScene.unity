@@ -1964,8 +1964,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e6881141cf05d742a44ff4a15b0c743, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HexPrefab: {fileID: 4324561045488090595, guid: 57a732f6c413238408337b229aa7c354,
-    type: 3}
   HexagonSprite:
   - {fileID: 7504561982352861695, guid: c77c820c7e4728a448d34163749ce7b4, type: 3}
   - {fileID: -5829101439679298148, guid: c77c820c7e4728a448d34163749ce7b4, type: 3}
@@ -1980,6 +1978,8 @@ MonoBehaviour:
   - {fileID: -2806198072054104668, guid: 2d2273664137fd24688c5e3a35075fc0, type: 3}
   - {fileID: 6037558551413399565, guid: 2d2273664137fd24688c5e3a35075fc0, type: 3}
   - {fileID: 4487907027722954856, guid: 2d2273664137fd24688c5e3a35075fc0, type: 3}
+  HexPrefab: {fileID: 4324561045488090595, guid: 57a732f6c413238408337b229aa7c354,
+    type: 3}
   CornerPrefab: {fileID: 8225045992879341461, guid: 7b6b3ed58a6835f4ca2cb25dc6112239,
     type: 3}
   BombTextPrefab: {fileID: 2840791206824009035, guid: fca335c921d0ad74182c2e7ec953afb6,
@@ -1998,7 +1998,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Canvas: {fileID: 1131637937}
   CurrentLevel: {fileID: 11400000, guid: ce10e80296398254c83adea9dd04664a, type: 2}
-  HexGroupOutline: {fileID: 1940232182}
+  HexagonGroupOutline: {fileID: 1940232182}
   SelectedCornerIndex: {x: 0, y: 0}
   GameState: 0
   Score: 0

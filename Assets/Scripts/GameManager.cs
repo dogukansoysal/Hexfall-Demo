@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     public Canvas Canvas;
     
     public Level CurrentLevel;
-    public Transform HexGroupOutline;
+    public Transform HexagonGroupOutline;
     
     public Vector2Int SelectedCornerIndex;
     public GameState GameState;
@@ -40,6 +40,9 @@ public class GameManager : MonoBehaviour
             Instance = this;
         }
         Cam = Camera.main;
+        
+        
+        
     }
 
     // Start is called before the first frame update
@@ -257,7 +260,7 @@ public class GameManager : MonoBehaviour
     {
         var angle = direction == (int) RotationDirection.Clockwise ? -120 : 120;
         
-        var tween = HexGroupOutline.DORotate(new Vector3(0, 0, angle), RotationDuration, RotateMode.LocalAxisAdd);
+        var tween = HexagonGroupOutline.DORotate(new Vector3(0, 0, angle), RotationDuration, RotateMode.LocalAxisAdd);
         while (tween.active)
         {
             yield return null;
@@ -305,22 +308,22 @@ public class GameManager : MonoBehaviour
     
     public void ShowHexGroupOutline(Vector2Int cornerIndex)
     {
-        HexGroupOutline.gameObject.SetActive(true);
+        HexagonGroupOutline.gameObject.SetActive(true);
             
-        HexGroupOutline.position = GridManager.Instance.CornerArray[cornerIndex.x, cornerIndex.y].position;
+        HexagonGroupOutline.position = GridManager.Instance.CornerArray[cornerIndex.x, cornerIndex.y].position;
         if ((cornerIndex.y % 2 != 0 && cornerIndex.x % 2 != 0) || (cornerIndex.y % 2 == 0 && cornerIndex.x % 2 == 0))
         {
-            HexGroupOutline.rotation = Quaternion.Euler(new Vector3(0,0,0));
+            HexagonGroupOutline.rotation = Quaternion.Euler(new Vector3(0,0,0));
         }
         else
         {
-            HexGroupOutline.rotation = Quaternion.Euler(new Vector3(0,0,60));
+            HexagonGroupOutline.rotation = Quaternion.Euler(new Vector3(0,0,60));
         }
     }
 
     public void HideHexGroupOutline()
     {
-        HexGroupOutline.gameObject.SetActive(false);
+        HexagonGroupOutline.gameObject.SetActive(false);
     }
 
     

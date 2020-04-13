@@ -10,13 +10,15 @@ using Random = UnityEngine.Random;
 public class GridManager : MonoBehaviour
 {
     public static GridManager Instance; // static singleton
-    
-    public Transform HexPrefab;
 
     public Sprite[] HexagonSprite;
     public Sprite[] BombSprite;
-
+    
+    [SerializeField]
+    public Transform HexPrefab;
+    [SerializeField]
     public Transform CornerPrefab;
+    [SerializeField]
     public Transform BombTextPrefab;
 
     
@@ -42,7 +44,8 @@ public class GridManager : MonoBehaviour
     public void InitGrid(Level level)
     {
         // TODO: this scale will be re-calculated depending on hex width and height to fit in screen.
-
+        FixHexagonScale();
+        
         _hexWidth *= HexPrefab.transform.lossyScale.x;
         _hexHeight *= HexPrefab.transform.lossyScale.y;
         
@@ -62,6 +65,15 @@ public class GridManager : MonoBehaviour
         
     }
 
+    public void FixHexagonScale()
+    {
+        var scaleRatio = GameConstants.ScaleRatio / GameManager.Instance.CurrentLevel.GridWidth;
+        HexPrefab.localScale = Vector3.one * scaleRatio;
+        CornerPrefab.localScale = Vector3.one * scaleRatio;
+        BombTextPrefab.localScale = Vector3.one * scaleRatio;
+        GameManager.Instance.HexagonGroupOutline.localScale = Vector3.one * scaleRatio;
+    }
+    
     public Vector3 CalculateWorldPosition(Vector2Int gridPosition)
     {
         var offset = 0f;
