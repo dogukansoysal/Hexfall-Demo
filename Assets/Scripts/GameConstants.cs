@@ -14,7 +14,7 @@ public static class GameConstants
 
     public const float RotationDuration = 0.25f;
 
-    public const int ExplosionScore = 40;
+    public const int ExplosionScore = 5;
 
     public const float CornerCheckDuration = 0.1f;
 

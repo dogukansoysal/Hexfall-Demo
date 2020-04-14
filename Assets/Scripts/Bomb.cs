@@ -22,8 +22,7 @@ public class Bomb : MonoBehaviour
         Life = life;
         var hex = transform.GetComponent<Hexagon>();
         transform.GetComponent<SpriteRenderer>().sprite = GridManager.Instance.BombSprite[hex.ColorIndex];
-        LifeText = Instantiate(GridManager.Instance.BombTextPrefab).GetComponent<TextMeshProUGUI>();
-        LifeText.transform.SetParent(GameManager.Instance.Canvas.transform);
+        LifeText = Instantiate(GridManager.Instance.BombTextPrefab, GameManager.Instance.Canvas.transform).GetComponent<TextMeshProUGUI>();
         LifeText.text = Life.ToString();
     }
 

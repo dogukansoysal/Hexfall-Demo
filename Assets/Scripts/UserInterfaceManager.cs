@@ -57,7 +57,7 @@ public class UserInterfaceManager : MonoBehaviour
     
     public void SpawnFloatingText(Vector3 position)
     {
-        var floatingText = Instantiate(FloatingTextPrefab);
+        var floatingText = Instantiate(FloatingTextPrefab, GameManager.Instance.Canvas.transform);
         floatingText.GetComponent<FloatingText>().Initialize(position);
     }
 }

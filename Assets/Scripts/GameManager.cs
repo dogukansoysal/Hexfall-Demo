@@ -23,14 +23,16 @@ public class GameManager : MonoBehaviour
     public GameState GameState;
 
         
-    /* Touch Management */
+    /* Input Management */
     // TODO: move to another script.
-    private Vector2 _firstTouchPosition;
-    private Vector2 _currentTouchPosition;
+    private Vector2 _firstInputPosition;
+    private Vector2 _currentInputPosition;
 
     /* Score Management */
     public int Score;
     public int explodedHexagonCount;
+    
+    
     
     private void Awake()
     {
@@ -40,11 +42,10 @@ public class GameManager : MonoBehaviour
             Instance = this;
         }
         Cam = Camera.main;
-        
-        
-        
     }
 
+    
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -53,6 +54,8 @@ public class GameManager : MonoBehaviour
         GameState = GameState.Playable;
     }
 
+    
+    
     // Update is called once per frame
     void Update()
     {
@@ -60,23 +63,23 @@ public class GameManager : MonoBehaviour
         
         if (Input.GetMouseButtonDown(0))
         {
-            CalculateCurrentTouchPosition();
-            _firstTouchPosition = _currentTouchPosition;
+            CalculateCurrentInputPosition();
+            _firstInputPosition = _currentInputPosition;
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            CalculateCurrentTouchPosition();
-            if (Vector2.Distance(_firstTouchPosition, _currentTouchPosition) < 2f)
+            CalculateCurrentInputPosition();
+            if (Vector2.Distance(_firstInputPosition, _currentInputPosition) < 2f)
             {
-                SelectedCornerIndex = GridManager.Instance.FindClosestCornerIndex(_firstTouchPosition);
+                SelectedCornerIndex = GridManager.Instance.FindClosestCornerIndex(_firstInputPosition);
                 SelectCorner(SelectedCornerIndex);
             }
         }
         else if (Input.GetMouseButton(0))
         {
-            CalculateCurrentTouchPosition();
+            CalculateCurrentInputPosition();
             // Select Corner
-            if (Vector2.Distance(_firstTouchPosition, _currentTouchPosition) > 3f)
+            if (Vector2.Distance(_firstInputPosition, _currentInputPosition) > 3f)
             {
                 if (SelectedCornerIndex.x < 0 || SelectedCornerIndex.y < 0) return;
                 if (GridManager.Instance.CornerArray[SelectedCornerIndex.x, SelectedCornerIndex.y] == null) return;
@@ -102,11 +105,15 @@ public class GameManager : MonoBehaviour
 
     }
 
+    
+    
     public void RestartGame()
     {
         FinishGame();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+    
+    
     
     public void OpenMenuScene()
     {
@@ -124,6 +131,8 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("LastScore", Score);
     }
     
+    
+    
     private void UpdateHighScore()
     {
         PlayerPrefs.SetInt("HighScore", Score);
@@ -133,11 +142,12 @@ public class GameManager : MonoBehaviour
     
     
     
-    
-    private void CalculateCurrentTouchPosition(){
-        _currentTouchPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
-        _currentTouchPosition = Cam.ScreenToWorldPoint(_currentTouchPosition);
+    private void CalculateCurrentInputPosition(){
+        _currentInputPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
+        _currentInputPosition = Cam.ScreenToWorldPoint(_currentInputPosition);
     }
+    
+    
     
     private IEnumerator MakeMove(Vector2Int selectedCornerIndex)
     {
@@ -198,6 +208,7 @@ public class GameManager : MonoBehaviour
     }
 
 
+    
     private IEnumerator RotateHexGroup(Hexagon[] hexGroup, int direction)
     {
 
@@ -256,6 +267,8 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(RotationDuration/4);
     }
     
+    
+    
     private IEnumerator RotateHexGroupOutline(int direction)
     {
         var angle = direction == (int) RotationDirection.Clockwise ? -120 : 120;
@@ -268,43 +281,62 @@ public class GameManager : MonoBehaviour
     }
     
     
+    
+    /// <summary>
+    /// Calculate the rotation direction with angles.
+    /// 
+    /// RULE:
+    ///     If last input angle > first input angle then the rotation is anti-clockwise
+    /// EXCEPTION:
+    ///     Due to 360 degree coordinate system, angle between 0 to 355 is actually 1 degree, not 355.
+    ///     So the function assumes that, if SIGNED angle between inputs greater then 180, it will be clockwise rotation.
+    /// </summary>
+    /// <returns> Rotation Direction in integer.</returns>
     private int GetRotationDirection()
     {
         var selectedCorner = GridManager.Instance.CornerArray[SelectedCornerIndex.x, SelectedCornerIndex.y];
-        if (!selectedCorner) 
-            return -1;
+        var heading = (Vector3)_firstInputPosition - selectedCorner.position;
+        var direction = heading / heading.magnitude;
         
-        // Released on left side of hex.
-        if (selectedCorner.position.x > _currentTouchPosition.x)
-        {
-            if (_firstTouchPosition.y > _currentTouchPosition.y)
-            {
-                return (int)RotationDirection.AntiClockwise;
-            }
-            return (int)RotationDirection.Clockwise;
-        }
-        // Released on Right side of hex.
-        else
-        {
-            if (_firstTouchPosition.y > _currentTouchPosition.y)
-            {
-                return (int)RotationDirection.Clockwise;
-            }
-            return (int)RotationDirection.AntiClockwise;
-        }
-    }
+        var firstTouchAngle = Vector3.SignedAngle(selectedCorner.right, direction, Vector3.forward);
+        firstTouchAngle += firstTouchAngle < 0 ? 360 : 0;
+            
+        heading = (Vector3)_currentInputPosition - selectedCorner.position;
+        direction = heading / heading.magnitude;
+        
+        var currentTouchAngle = Vector3.SignedAngle(selectedCorner.right, direction, Vector3.forward);
+        currentTouchAngle += currentTouchAngle < 0 ? 360 : 0;
 
+        // Touch started from top right and finished bottom right
+        if (currentTouchAngle - firstTouchAngle > 180)
+            return (int)RotationDirection.Clockwise;
+        
+        // Touch started from bottom right and finished top right
+        if(currentTouchAngle - firstTouchAngle < -180)
+            return (int)RotationDirection.AntiClockwise;
+        
+        if (currentTouchAngle > firstTouchAngle)
+            return (int) RotationDirection.AntiClockwise;
+        
+        return (int) RotationDirection.Clockwise;
+    }
+    
+    
 
     public void SelectCorner(Vector2Int cornerIndex)
     {
         ShowHexGroupOutline(cornerIndex);
     }
     
+    
+    
     public void ReleaseCorner()
     {
         SelectedCornerIndex = new Vector2Int(-1, -1);
         HideHexGroupOutline();
     }
+    
+    
     
     public void ShowHexGroupOutline(Vector2Int cornerIndex)
     {
@@ -321,11 +353,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    
+    
     public void HideHexGroupOutline()
     {
         HexagonGroupOutline.gameObject.SetActive(false);
     }
 
+    
     
     /// <summary>
     /// Functions related to score management.
@@ -336,8 +371,7 @@ public class GameManager : MonoBehaviour
     {
         Score = explodedHexagonCount * ExplosionScore;
     }
-
-
+    
     #endregion
     
     

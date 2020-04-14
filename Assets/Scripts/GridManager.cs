@@ -69,8 +69,7 @@ public class GridManager : MonoBehaviour
     {
         var scaleRatio = GameConstants.ScaleRatio / GameManager.Instance.CurrentLevel.GridWidth;
         HexPrefab.localScale = Vector3.one * scaleRatio;
-        CornerPrefab.localScale = Vector3.one * scaleRatio;
-        BombTextPrefab.localScale = Vector3.one * scaleRatio;
+        //CornerPrefab.localScale = Vector3.one * scaleRatio;
         GameManager.Instance.HexagonGroupOutline.localScale = Vector3.one * scaleRatio;
     }
     
@@ -370,49 +369,6 @@ public class GridManager : MonoBehaviour
         HexArray[gridIndex.x, gridIndex.y] = null;
     }
     
-    
-    
-    
-    
-    
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    public bool CheckEveryCornerIfPossibleMove()
-    {
-        for (var y = 0; y < _cornerArray.GetLength(1); y++)
-        {
-            for (var x = 0; x < _cornerArray.GetLength(0); x++)
-            {
-                if (_cornerArray[x, y] == null) continue;
-
-                var hexGroup = FindHexGroup(new Vector2Int(x,y));
-                var sameColorIndex = -1;
-                
-                if (hexGroup[0].GetComponent<Hexagon>().ColorIndex == 
-                    hexGroup[1].GetComponent<Hexagon>().ColorIndex)
-                {
-                    
-                }
-                else if (hexGroup[0].GetComponent<Hexagon>().ColorIndex ==
-                         hexGroup[1].GetComponent<Hexagon>().ColorIndex)
-                {
-                    
-                }else if (hexGroup[0].GetComponent<Hexagon>().ColorIndex ==
-                          hexGroup[1].GetComponent<Hexagon>().ColorIndex)
-                {
-                    
-                        
-                }
-                    
-                    
-            }
-        }
-
-        return false;
-    }
-    
     public bool CheckEveryNeighbourHex(Transform[] hexGroup, Transform centerHex, int colorIndex)
     {
         var neighbourIndices = centerHex.GetComponent<Hexagon>().NeighbourIndices;
@@ -533,7 +489,7 @@ public class GridManager : MonoBehaviour
         /// Test Function for functionality
         /// </summary>
         /// <param name="index">Corner Index</param>
-        public void TempDestroyFunc(Vector2Int index)
+        public void TestDestroyFunc(Vector2Int index)
         {
             var hexGroup = FindHexGroup(index);
             foreach (var hex in hexGroup)
@@ -541,6 +497,44 @@ public class GridManager : MonoBehaviour
                 if(hex != null)
                     Destroy(hex.gameObject);
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckEveryCornerIfPossibleMove()
+        {
+            for (var y = 0; y < _cornerArray.GetLength(1); y++)
+            {
+                for (var x = 0; x < _cornerArray.GetLength(0); x++)
+                {
+                    if (_cornerArray[x, y] == null) continue;
+
+                    var hexGroup = FindHexGroup(new Vector2Int(x,y));
+                    var sameColorIndex = -1;
+                
+                    if (hexGroup[0].GetComponent<Hexagon>().ColorIndex == 
+                        hexGroup[1].GetComponent<Hexagon>().ColorIndex)
+                    {
+                    
+                    }
+                    else if (hexGroup[0].GetComponent<Hexagon>().ColorIndex ==
+                             hexGroup[1].GetComponent<Hexagon>().ColorIndex)
+                    {
+                    
+                    }else if (hexGroup[0].GetComponent<Hexagon>().ColorIndex ==
+                              hexGroup[1].GetComponent<Hexagon>().ColorIndex)
+                    {
+                    
+                        
+                    }
+                    
+                    
+                }
+            }
+
+            return false;
         }
 
     #endregion

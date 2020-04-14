@@ -155,7 +155,6 @@ public class Hexagon : MonoBehaviour
 
             // If not reached to bottom, continue.
             if (heightIndex > 0) continue;
-            Debug.Log("AAAAAAAAAAAA");
             Debug.LogError("This column is not empty." + GridIndex.ToString());
             heightIndex = GameManager.Instance.CurrentLevel.GridHeight - 1;
             break;
