@@ -177,7 +177,7 @@ public class GameManager : MonoBehaviour
                         // Clear hexagon from grid
                         GridManager.Instance.ClearGridCell(hex.GridIndex);
                     }
-
+                    
                     var scoreBeforeUpdate = Score/1000;
                     
                     UserInterfaceManager.Instance.UpdateScoreText();

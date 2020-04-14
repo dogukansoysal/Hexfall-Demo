@@ -5,11 +5,9 @@ using UnityEngine;
 
 public static class GameConstants
 {
-    public const float DropDuration = 0.3f;
+    public const float DropDuration = 0.5f;
     public const float FallDuration = 0.5f;    // Used for falling to empty grid cells.
-
-    public const float MaxDropDuration = 3f;
-
+    
     public const float DropPosition = 13f;
 
     public const float RotationDuration = 0.25f;

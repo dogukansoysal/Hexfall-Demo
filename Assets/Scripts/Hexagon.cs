@@ -136,7 +136,7 @@ public class Hexagon : MonoBehaviour
         var tween = transform.DOMove(targetPosition, dropDuration);
         if (isNewSpawned)
         {
-            dropDuration = Mathf.Clamp(transform.position.y - targetPosition.y,0.25f, GameConstants.MaxDropDuration) * GameConstants.DropDuration * Random.Range(0.8f, 1.2f);
+            dropDuration = GameConstants.DropDuration * Random.Range(0.8f, 1.2f);
             tween = transform.DOMove(targetPosition, dropDuration).SetEase(Ease.OutBounce);
         }
         
