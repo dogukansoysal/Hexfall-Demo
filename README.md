@@ -1,28 +1,43 @@
-# HexagonDogukan
-Hexfall Game - Demo Project
+# Hexfall — Hex-Grid Puzzle Prototype
 
-This game was developed as a Demo of the game called Hexfall.
+A mobile puzzle prototype built in Unity: rotate groups of three hexagons to line up matching colours, and watch out for bombs.
 
-## Purpose of The Game
-The main mechanic is grouping three same colored hexagon in a triangle together.
+> Built in April 2020 (commit history: 3 days). Archived as a finished prototype.
 
-Every 1000 points, a bomb will spawn and a counter will be counting top of it. 
+## Gameplay
 
-Every move you made, the counter will decrease and if it reaches to Zero, **you will lose.**
+- Tap a corner between three hexagons to select the group.
+- Drag around it to rotate the group 120° clockwise or anti-clockwise.
+- Three or more same-coloured hexagons that touch are cleared, and new ones fall in from above.
+- Every 1,000 points a **bomb** appears with a move counter. Each move lowers it, and if it reaches zero you lose.
 
-## Editor's Level Configuration
-You can change;
+Inspired by the mechanic of the mobile game *Hexfall*. All code is my own.
 
-**Grid Size**: Width & Height, 
+## Technical highlights
 
-**Variety of Colors**: Color Count,
+- **Offset hex grid with corner selection:** `GridManager` maps every grid corner to its three surrounding hexagons in clockwise order and handles the odd/even row offset.
+- **Rotation from a free drag:** the signed angle between the first and last touch decides the rotation direction, so players do not need an exact swipe.
+- **Match and refill:** after each rotation the grid checks neighbours, clears matches, drops hexagons down and spawns new colours.
+- **Data-driven levels:** grid width/height, colour count and gap live in a `ScriptableObject` (`Assets/Levels/Level_0.asset`), so changing them needs no code change.
+- **Motion and screen fit:** tweened motion uses DOTween, and the camera adapts to any screen ratio (`CameraAspectRatioFix`).
 
-**Gap** between hexagons from;
-> /Assets/Levels/Level_0.asset 
+## Project layout
 
+```
+Assets/Scripts/
+  GameManager.cs       game loop, rotation, score, bombs
+  GridManager.cs       hex grid, corners, matching, refilling
+  Hexagon.cs           tile state and animations
+  Bomb.cs              countdown bomb
+  TouchManager.cs      touch input
+  ScriptableObject/Level.cs
+```
 
+## Run it
 
-### Original Gameplay Video
-https://www.youtube.com/watch?v=xQWS_-qrziQ
+- **Android:** install [`APK/HexfallDogukan.apk`](APK/HexfallDogukan.apk).
+- **Editor:** open the project in Unity **2019.3.3f1** and play the scene in `Assets/Scenes`. Portrait orientation, 1080×2160 recommended.
 
-***Thank you...***
+## Tech
+
+Unity 2019.3 · C# · DOTween · TextMesh Pro
